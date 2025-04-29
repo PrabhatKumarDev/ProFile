@@ -1,5 +1,5 @@
 import React from "react";
-import logo from '../data.js'
+import {logo} from '../data.js'
 const Navbar = () => {
   return (
     <div className="bg-[#343A40] p-6 flex justify-between items-center border-b-2 border-[#495057]">

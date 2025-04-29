@@ -1,17 +1,74 @@
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #343A40;
+  background-color: #040b1a;
   color: #F8F9FA;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Poppins', sans-serif;
 }
 
-#logo{
-  font-family: 'Courier New', Courier, monospace; /* Use a coding-style font */
-  font-size: 20px; /* Adjust the size */
-  color: #3498db; /* Set color */
-  letter-spacing: 2px; 
-  font-weight: bold; /* Make the text bold */
+#logo {
+  font-family: 'Courier New', Courier, monospace;
+  /* Use a coding-style font */
+  font-size: 20px;
+  /* Adjust the size */
+  color: #3498db;
+  /* Set color */
+  letter-spacing: 2px;
+  font-weight: bold;
+  /* Make the text bold */
+}
+
+.perspective {
+  perspective: 1000px;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s;
+
+}
+
+.card-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  background: rgba(52, 58, 64, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.37);
+  backdrop-filter: blur(0.4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+}
+
+.card-front {
+  /* background: white; */
+  transform: rotateY(0deg);
+
+}
+
+.card-back {
+  /* background: white; */
+  transform: rotateY(180deg);
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.signup_button:hover {
+  background-color: #176efb;
+  color: white;
+  cursor: pointer;
 }
