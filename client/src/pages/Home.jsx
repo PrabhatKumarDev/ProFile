@@ -19,12 +19,12 @@ const Home = () => {
             {/* Navigation Buttons */}
             <div className="flex items-center gap-4">
               <button variant="ghost" asChild>
-                <Link href="/login">Log in</Link>
+                <Link to="/login">Log in</Link>
               </button>
               <button asChild>
                 <Link
                   className="bg-[#3576e0] text-[black] px-4 py-3 rounded-[5px] signup_button"
-                  href="/signup"
+                  to="/register"
                 >
                   Sign up
                 </Link>
@@ -49,7 +49,7 @@ const Home = () => {
             {/* Hero Buttons */}
             <div className="flex justify-center mt-8">
               <button className="flex gap-2 bg-[#3b82f6] text-[black] px-[50px] py-[10px] rounded-[20px] cursor-pointer hover:bg-[#3677e0]">
-                Get Started
+                <Link to="/register">Get Started</Link>
                 <MoveRight />
               </button>
               <button className="ml-4 flex gap-2 bg-[#020817] text-[white] px-[50px] py-[10px] rounded-[20px] hover:bg-[#1e293b] hover:text-[#fff] cursor-pointer">
