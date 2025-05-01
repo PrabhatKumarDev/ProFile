@@ -48,10 +48,12 @@ const Home = () => {
             </p>
             {/* Hero Buttons */}
             <div className="flex justify-center mt-8">
+              <Link to={"/register"}>
               <button className="flex gap-2 bg-[#3b82f6] text-[black] px-[50px] py-[10px] rounded-[20px] cursor-pointer hover:bg-[#3677e0]">
-                <Link to="/register">Get Started</Link>
+                Get Started
                 <MoveRight />
               </button>
+              </Link>
               <button className="ml-4 flex gap-2 bg-[#020817] text-[white] px-[50px] py-[10px] rounded-[20px] hover:bg-[#1e293b] hover:text-[#fff] cursor-pointer">
                 See Examples
               </button>

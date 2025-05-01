@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
@@ -17,7 +18,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} /> {/* Assuming Home is the dashboard */}
-            <Route path="/register" element={<Login />} /> {/* Reusing Login component for Register */}
+            <Route path="/register" element={<Register />} /> {/* Reusing Login component for Register */}
           </Routes>
         </ConditionalLayout>
       </Router>
