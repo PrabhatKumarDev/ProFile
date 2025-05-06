@@ -1,26 +1,60 @@
 const mongoose = require("mongoose");
 
 const PortfolioSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  username: { type: String, unique: true },
-  theme: { type: String },
-  about: String,
-  skills: [String],
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  portfolioName: { type: String, required: true },
+  selectedTemplate: { type: String, required: true },
+  
+  basicInfo: {
+    fullName: { type: String },
+    title: { type: String },
+    summary: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    location: { type: String },
+    website: { type: String },
+  },
+  socialLinks: {
+    linkedIn: { type: String },
+    github: { type: String },
+    twitter: { type: String },
+    instagram: { type: String },
+  },
+  skills: [
+    {
+      name: { type: String },
+      level: { type: Number }, // Skill level as a percentage (e.g., 90 for 90%)
+    },
+  ],
+  education: [
+    {
+      degree: { type: String },
+      field: { type: String },
+      institution: { type: String },
+      startDate: { type: String },
+      endDate: { type: String },
+    },
+  ],
+  experience: [
+    {
+      position: { type: String },
+      company: { type: String },
+      startDate: { type: String },
+      endDate: { type: String },
+      description: { type: String },
+    },
+  ],
   projects: [
     {
-      title: String,
-      description: String,
+      name: { type: String },
+      description: { type: String },
       techStack: [String],
-      link: String
-    }
+      link: { type: String },
+      image: { type: String }, // URL for the project image
+    },
   ],
-  social: {
-    linkedin: String,
-    github: String,
-    twitter: String
-  }
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Portfolio", PortfolioSchema);
-// // This code defines a Mongoose schema for a Portfolio model. The schema includes fields for userId, username, theme, about, skills, projects, and social links. The userId field references the User model, and the projects field is an array of objects containing details about each project. The schema is then exported as a Mongoose model named "Portfolio". This allows the model to be used in other parts of the application for creating, reading, updating, and deleting portfolio records in a MongoDB database.
-// // The Portfolio model can be used to manage user portfolios in a web application, allowing users to showcase their skills and projects.

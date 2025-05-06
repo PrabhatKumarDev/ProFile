@@ -7,7 +7,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import TemplateSelection from "./pages/TemplateSelection";
 import Dashboard from "./pages/Dashboard";
+import PortfolioEditor from "./pages/PortfolioEditor";
+import PortfolioPreview from "./pages/PortfolioPreview";
 
 function App() {
   return (
@@ -18,7 +21,13 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} /> {/* Assuming Home is the dashboard */}
+            <Route path="/templates" element={<TemplateSelection/>} /> {/* Placeholder for Templates page */}
+            <Route path="/editor" element={<PortfolioEditor />} /> {/* Placeholder for Portfolio Editor page */}
+            <Route path="/preview" element={<PortfolioPreview />} /> {/* Placeholder for Portfolio Preview page */}
             <Route path="/register" element={<Register />} /> {/* Reusing Login component for Register */}
+            <Route path="/editor/:id" element={<PortfolioEditor />} /> {/* Portfolio Editor with ID */}
+            <Route path="/preview/:id" element={<PortfolioPreview />} /> {/* Portfolio Preview with ID */}
+            {/* Add more routes as needed */}
           </Routes>
         </ConditionalLayout>
       </Router>
@@ -31,7 +40,7 @@ const ConditionalLayout = ({ children }) => {
   const location = useLocation();
 
   // Define routes where Navbar and Sidebar should not be displayed
-  const noLayoutRoutes = ["/login","/register","/"];
+  const noLayoutRoutes = ["/login","/register"];
 
   // Check if the current route is in the noLayoutRoutes list
   const shouldShowLayout = !noLayoutRoutes.includes(location.pathname);
@@ -40,7 +49,7 @@ const ConditionalLayout = ({ children }) => {
     <>
       {shouldShowLayout && <Navbar />}
       <div className="flex flex-row">
-        {shouldShowLayout && <Sidebar />}
+        {/* {shouldShowLayout && <Sidebar />} */}
         {children}
       </div>
     </>

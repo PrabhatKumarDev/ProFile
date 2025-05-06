@@ -1,236 +1,158 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { MoveRight } from "lucide-react";
-import { pictures } from "../data";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Assuming you have an AuthContext for authentication state
+import { ArrowRight, Monitor, Cpu, Layout, Code, Award,Briefcase } from 'lucide-react';
 
-const Home = () => {
+const Home= () => {
+  const {user}=useAuth(); // Mocked authentication state
+
   return (
-    <>
-      {/* Main Container */}
-      <div className="w-full min-h-screen bg-gradient-to-br from-background to-muted">
-        
-        {/* Header Section */}
-        <header className="bg-background/80 backdrop-blur-sm">
-          <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-            {/* Logo */}
-            <div className="font-bold text-xl bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-              ProFile
-            </div>
-            {/* Navigation Buttons */}
-            <div className="flex items-center gap-4">
-              <button variant="ghost" asChild>
-                <Link to="/login">Log in</Link>
-              </button>
-              <button asChild>
-                <Link
-                  className="bg-[#3576e0] text-[black] px-4 py-3 rounded-[5px] signup_button"
-                  to="/register"
-                >
-                  Sign up
-                </Link>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Hero Section */}
-        <div className="w-[100vw] pt-15 pb-20 bg-[#111a2a]">
-          <div className="text-center flex flex-col items-center justify-center">
-            {/* Hero Heading */}
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Build Your Professional Portfolio in Minutes
-            </h1>
-            {/* Hero Description */}
-            <p className="text-center text-lg text-gray-400 max-w-2xl mx-auto mb-8">
-              Create stunning, responsive portfolios with our drag-and-drop
-              builder. Showcase your work, skills, and experience to stand out
-              in your industry.
-            </p>
-            {/* Hero Buttons */}
-            <div className="flex justify-center mt-8">
-              <Link to={"/register"}>
-              <button className="flex gap-2 bg-[#3b82f6] text-[black] px-[50px] py-[10px] rounded-[20px] cursor-pointer hover:bg-[#3677e0]">
-                Get Started
-                <MoveRight />
-              </button>
-              </Link>
-              <button className="ml-4 flex gap-2 bg-[#020817] text-[white] px-[50px] py-[10px] rounded-[20px] hover:bg-[#1e293b] hover:text-[#fff] cursor-pointer">
-                See Examples
-              </button>
-            </div>
-            {/* Hero Image */}
-            <div className="w-[45%] md:mt-0 flex justify-center">
-              <img
-                src={pictures.portfolio}
-                alt="Portfolio illustration"
-                className="max-w-full h-auto mt-10"
-              />
-            </div>
+    <div className="min-h-screen w-full bg-white">
+      {/* Hero Section */}
+      <div className="relative bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+            <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+              <div className="sm:text-center lg:text-left">
+                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                  <span className="block xl:inline">Create your professional</span>{' '}
+                  <span className="block text-blue-600 xl:inline">portfolio in minutes</span>
+                </h1>
+                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                  Showcase your skills, projects and experience with a beautiful portfolio website. Choose from stunning templates, customize with your information, and share with the world.
+                </p>
+                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                  <div className="rounded-md shadow">
+                    <Link
+                      to={user ? "/dashboard" : "/register"}
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out"
+                    >
+                      {user ? "Go to Dashboard" : "Get Started"} <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </div>
+                  <div className="mt-3 sm:mt-0 sm:ml-3">
+                    <Link
+                      to="/templates"
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out"
+                    >
+                      View Templates
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </main>
           </div>
         </div>
-
-        {/* Features Section */}
-        <div className="w-full bg-[#020817] text-center py-10">
-          <h1 className="text-3xl">
-            Everything You Need to Showcase Your Work
-          </h1>
-          <div className="flex align-center justify-center mt-8 mb-10">
-            {/* Feature 1 */}
-            <div className="grid gap-8 mx-4">
-              <div className="bg-white text-start flex flex-col dark:bg-[#020817] p-6 rounded-xl border border-gray-200 dark:border-gray-700 w-[300px]">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4">
-                  {/* Replace with a simple SVG icon or emoji for now */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-layers h-6 w-6 text-blue-600 dark:text-blue-400"
-                  >
-                    <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"></path>
-                    <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path>
-                    <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                  Drag & Drop Builder
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Easily build your portfolio with our intuitive drag and drop
-                  interface. No coding required.
-                </p>
-              </div>
-            </div>
-            {/* Feature 2 */}
-            <div className="grid gap-8 mx-4">
-              <div className="bg-white dark:bg-[#020817] text-start flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 w-[300px]">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mb-4">
-                  {/* Replace with a simple SVG icon or emoji for now */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-file-pen h-6 w-6 text-purple-600 dark:text-purple-400"
-                  >
-                    <path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v10"></path>
-                    <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                    <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-4 1 1-4Z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                  Customizable Templates
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Choose from dozens of professional templates and customize
-                  them to match your personal brand.
-                </p>
-              </div>
-            </div>
-            {/* Feature 3 */}
-            <div className="grid gap-8 mx-4">
-              <div className="bg-white dark:bg-[#020817] text-start flex flex-col p-6 rounded-xl border border-gray-200 dark:border-gray-700 w-[300px]">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-4">
-                  {/* Replace with a simple SVG icon or emoji for now */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-folders h-6 w-6 text-green-600 dark:text-green-400"
-                  >
-                    <path d="M20 17a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.9a2 2 0 0 1-1.69-.9l-.81-1.2a2 2 0 0 0-1.67-.9H8a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2Z"></path>
-                    <path d="M2 8v11a2 2 0 0 0 2 2h14"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                  Multiple Portfolios
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Create different portfolios for different purposes or
-                  audiences. All managed in one place.
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+          <img
+            className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
+            src="https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt="Person working on portfolio"
+          />
         </div>
-
-        {/* Call to Action Section */}
-        <section className="py-20 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-          <div className="container mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold mb-6">
-              Ready to Build Your Professional Portfolio?
-            </h2>
-            <p className="text-lg mb-8 text-white/90">
-              Join thousands of professionals who have elevated their online
-              presence with PortfolioBuilder.
-            </p>
-            <a
-              href="/register"
-              className="inline-block text-white bg-[#020817] px-[50px] py-[10px] rounded-[20px] hover:bg-[#1e293b] hover:text-[#fff] cursor-pointer"
-            >
-              Get Started for Free
-            </a>
-          </div>
-        </section>
-
-        {/* Footer Section */}
-        <footer className="bg-slate-900 text-slate-300 py-12 px-4 dark:bg-slate-950">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Footer Left */}
-              <div>
-                <div className="font-bold text-xl text-white mb-4">
-                  MyPortfolio
-                </div>
-                <p className="text-sm text-slate-400">
-                  Showcasing my work, skills, and projects in one place.
-                </p>
-              </div>
-              {/* Footer Right */}
-              <div>
-                <h3 className="font-semibold mb-4">Quick Links</h3>
-                <ul className="space-y-2 text-sm">
-                  <li>
-                    <a href="#projects" className="hover:text-white">
-                      Projects
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#about" className="hover:text-white">
-                      About Me
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#contact" className="hover:text-white">
-                      Contact
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-slate-800 mt-12 pt-6 text-sm text-slate-400 text-center">
-              <p>© {new Date().getFullYear()} MyPortfolio. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
       </div>
-    </>
+
+      {/* Features */}
+      <div className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:text-center">
+            <h2 className="text-base text-blue-600 font-semibold tracking-wide uppercase">Features</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              Everything you need for a stunning portfolio
+            </p>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              Our platform provides all the tools you need to create a professional portfolio that stands out.
+            </p>
+          </div>
+
+          <div className="mt-10 grid md:grid-cols-2 gap-8">
+            {[
+              { Icon: Layout, title: "Professional Templates", desc: "Choose from a variety of professionally designed templates to match your style and industry." },
+              { Icon: Code, title: "Easy Customization", desc: "No coding required. Just fill in your information and customize to your liking." },
+              { Icon: Monitor, title: "Responsive Design", desc: "Your portfolio will look great on any device, from mobile phones to desktop computers." },
+              { Icon: Cpu, title: "Instant Hosting", desc: "Get a unique URL to share your portfolio with potential employers or clients instantly." },
+            ].map(({ Icon, title, desc }, idx) => (
+              <div key={idx} className="flex">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">{title}</h3>
+                  <p className="mt-2 text-base text-gray-500">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials */}
+      <div className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">Testimonials</h2>
+            <p className="mt-1 text-3xl font-extrabold text-gray-900 sm:text-4xl sm:tracking-tight">
+              Trusted by professionals worldwide
+            </p>
+          </div>
+          <div className="mt-12 grid md:grid-cols-3 gap-8">
+            {[
+              { name: "Alex Turner", role: "UI/UX Designer", quote: "This platform made creating my portfolio so simple. I was able to showcase my work professionally without any design skills." },
+              { name: "Samantha Lee", role: "Full Stack Developer", quote: "As a developer, I needed a clean portfolio to showcase my projects. This tool delivered exactly what I needed in under an hour." },
+              { name: "James Wilson", role: "Graphic Designer", quote: "I received multiple job offers after creating my portfolio here. The professional templates really help you stand out." },
+            ].map(({ name, role, quote }, idx) => (
+              <div key={idx} className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <p className="text-gray-600">"{quote}"</p>
+                <div className="mt-4 flex items-center">
+                  <div className="text-blue-600">
+                    <Award className="h-5 w-5" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-900">{name}</p>
+                    <p className="text-sm text-gray-500">{role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="bg-blue-600">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            <span className="block">Ready to showcase your work?</span>
+            <span className="block text-blue-200">Create your portfolio today.</span>
+          </h2>
+          <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+            <div className="inline-flex rounded-md shadow">
+              <Link
+                to={user ? "/dashboard" : "/register"}
+                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50"
+              >
+                {user ? "Go to Dashboard" : "Get Started"} <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-800">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <Briefcase className="h-8 w-8 text-white" />
+              <span className="ml-2 text-xl font-bold text-white">PortfolioBuilder</span>
+            </div>
+            <p className="text-gray-400 text-sm">
+              © {new Date().getFullYear()} PortfolioBuilder. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 

@@ -3,7 +3,12 @@ body {
   background-color: #040b1a;
   color: #F8F9FA;
 }
-
+input{
+  color: black;
+}
+textarea{
+  color: black;
+}
 h1,
 h2,
 h3,
