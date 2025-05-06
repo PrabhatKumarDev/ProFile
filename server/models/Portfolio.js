@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const PortfolioSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  portfolioName: { type: String, required: true },
+  portfolioName: { type: String, required: true ,unique: true },
   selectedTemplate: { type: String, required: true },
   
   basicInfo: {
@@ -54,6 +54,7 @@ const PortfolioSchema = new mongoose.Schema({
     },
   ],
   createdAt: { type: Date, default: Date.now },
+  published: { type: Boolean, default: false }, // Add a published field if needed
   updatedAt: { type: Date, default: Date.now },
 });
 

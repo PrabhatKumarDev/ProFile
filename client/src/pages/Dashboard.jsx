@@ -11,9 +11,9 @@ import { useAuth } from '../context/AuthContext';
 const Dashboard = () => {
   const {user,logout}=useAuth();
   console.log(user);
-  const publishedPortfolios = 0; // Replace with actual data]
-  const draftPortfolios = 0; // Replace with actual data
-  const recentlyUpdated = 0; // Replace with actual data
+  const [publishedPortfolios, setPublishedPortfolios] = useState(0);
+  const [draftPortfolios, setDraftPortfolios] = useState(0);
+  const [recentlyUpdated, setRecentlyUpdated] = useState(0);
   const [portfolios, setPortfolios] = useState([]); // State to store portfolios
   const navigate = useNavigate();
   console.log(portfolios);
@@ -25,19 +25,30 @@ const Dashboard = () => {
           console.error("No token found in localStorage");
           return;
         }
-  
-        const response = await fetch("http://localhost:5000/api/portfolio/all", {
+        const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+        const response = await fetch(`${apiUrl}/api/portfolio/all`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include token for authentication
           },
         });
-  
-        console.log("Response Status:", response.status);
-  
+
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched Portfolios:", data);
           setPortfolios(data); // Store fetched portfolios in state
+
+          // Calculate counts
+          const publishedCount = data.filter((portfolio) => portfolio.published).length;
+          const draftCount = data.filter((portfolio) => !portfolio.published).length;
+          const recentlyUpdatedCount = data.filter((portfolio) => {
+            const updatedDate = new Date(portfolio.updatedAt);
+            const now = new Date();
+            const diffInDays = (now - updatedDate) / (1000 * 60 * 60 * 24); // Difference in days
+            return diffInDays <= 7; // Updated within the last 7 days
+          }).length;
+
+          setPublishedPortfolios(publishedCount);
+          setDraftPortfolios(draftCount);
+          setRecentlyUpdated(recentlyUpdatedCount);
         } else {
           const errorData = await response.json();
           console.error("Error Response:", errorData);
@@ -46,7 +57,7 @@ const Dashboard = () => {
         console.error("Error fetching portfolios:", error);
       }
     };
-  
+
     fetchPortfolios();
   }, []);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -79,8 +90,9 @@ const Dashboard = () => {
     if (portfolioToDelete) {
       try {
         console.log("Deleting portfolio with ID:", portfolioToDelete);
+        const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
         const response = await fetch(
-          `http://localhost:5000/api/portfolio/${portfolioToDelete}`,
+          `${apiUrl}/api/portfolio/${portfolioToDelete}`,
           {
             method: "DELETE",
             headers: {
@@ -133,7 +145,7 @@ const Dashboard = () => {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Portfolios</p>
-                  <p className="text-2xl font-bold text-gray-900">{1}</p>
+                  <p className="text-2xl font-bold text-gray-900">{portfolios.length}</p>
                 </div>
               </div>
             </div>
@@ -278,7 +290,7 @@ const Dashboard = () => {
                           </button>
                           {portfolio.published && (
                             <button
-                              onClick={() => {/* Add share functionality */}}
+                            onClick={() => window.open(`/portfolio/${portfolio.portfolioName.toLowerCase()}`, "_blank")}
                               className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                               <Share2 className="h-4 w-4 mr-1" />

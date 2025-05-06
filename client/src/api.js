@@ -1,0 +1,1 @@
+console.log('Base URL:', process.env.REACT_APP_BASE_URL);

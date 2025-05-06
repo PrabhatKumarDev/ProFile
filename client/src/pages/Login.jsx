@@ -25,7 +25,8 @@ const Login = () => {
     try {
       setError('');
       setLoading(true);
-      const res = await axios.post('http://localhost:5000/api/auth/login', loginData);
+      const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+      const res = await axios.post(`${apiUrl}/api/auth/login`, loginData);
       login(res.data.user, res.data.token);
       navigate('/dashboard');
     } catch (err) {

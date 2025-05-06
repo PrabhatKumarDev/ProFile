@@ -1,6 +1,6 @@
 import { useState } from "react";
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation,matchPath } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -11,6 +11,7 @@ import TemplateSelection from "./pages/TemplateSelection";
 import Dashboard from "./pages/Dashboard";
 import PortfolioEditor from "./pages/PortfolioEditor";
 import PortfolioPreview from "./pages/PortfolioPreview";
+import PublicPortfolio from "./pages/PublicPortfolio";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
             <Route path="/register" element={<Register />} /> {/* Reusing Login component for Register */}
             <Route path="/editor/:id" element={<PortfolioEditor />} /> {/* Portfolio Editor with ID */}
             <Route path="/preview/:id" element={<PortfolioPreview />} /> {/* Portfolio Preview with ID */}
-            {/* Add more routes as needed */}
+            <Route path ="/portfolio/:slug" element={<PublicPortfolio />} /> {/* Portfolio by username */}
           </Routes>
         </ConditionalLayout>
       </Router>
@@ -40,10 +41,12 @@ const ConditionalLayout = ({ children }) => {
   const location = useLocation();
 
   // Define routes where Navbar and Sidebar should not be displayed
-  const noLayoutRoutes = ["/login","/register"];
+  const noLayoutRoutes = ["/login","/register ","/portfolio/:slug"];
 
   // Check if the current route is in the noLayoutRoutes list
-  const shouldShowLayout = !noLayoutRoutes.includes(location.pathname);
+  const shouldShowLayout = !noLayoutRoutes.some((route) =>
+    matchPath(route, location.pathname)
+  );
 
   return (
     <>

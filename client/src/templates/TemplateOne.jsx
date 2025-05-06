@@ -50,8 +50,9 @@ const TemplateOne = ({ portfolioName, basicInfo, socialLinks, skills, education,
               </div>
             )}
           </div>
-
+          {socialLinks && (
           <div className="mt-4 flex gap-4">
+            
             {socialLinks.linkedIn && (
               <a href={socialLinks.linkedIn} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600">
                 <Linkedin className="h-5 w-5" />
@@ -64,6 +65,7 @@ const TemplateOne = ({ portfolioName, basicInfo, socialLinks, skills, education,
             )}
             
           </div>
+          )}
         </div>
       </header>
 

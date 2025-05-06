@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Mail, Lock, User as UserIcon, AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
   const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' });
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -19,30 +20,88 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, email, password } = registerData;
-
+  
+    // Check if all fields are filled
     if (!name || !email || !password || !confirmPassword) {
-      setError('Please fill in all fields');
+      toast.error("Please fill in all fields", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return;
     }
-
+  
+    // Validate email format (only @gmail.com allowed)
+    const isValidEmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid Gmail address (e.g., example@gmail.com)", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+  
+    // Check if passwords match
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      toast.error("Passwords do not match", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return;
     }
-
+  
+    // Check password length
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      toast.error("Password must be at least 6 characters", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return;
     }
-
+  
     try {
-      setError('');
       setLoading(true);
-      await axios.post('http://localhost:5000/api/auth/register', registerData);
-      alert('Registered successfully! Please login.');
+      const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+      await axios.post(`${apiUrl}/api/auth/register`, registerData);
+      toast.success("Registered successfully! Please login.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.message || 'Register failed');
+      toast.error(err.response?.data?.message || "Register failed", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } finally {
       setLoading(false);
     }
@@ -51,6 +110,7 @@ const Register = () => {
   return (
     <div className="min-h-screen w-full bg-gray-50">
       <Navbar />
+      <ToastContainer /> {/* Add ToastContainer */}
       <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -66,15 +126,6 @@ const Register = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            {error && (
-              <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
-                <div className="flex">
-                  <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              </div>
-            )}
-
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">

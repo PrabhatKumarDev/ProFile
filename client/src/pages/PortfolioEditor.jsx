@@ -1,8 +1,9 @@
-import React, { useState,useEffect } from "react";
-import { Trash2, Plus,Save,Eye, ArrowLeft } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Trash2, Plus, Save, Eye, ArrowLeft } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const PortfolioEditor = () => {
   const [selectedSection, setSelectedSection] = useState("basic");
@@ -21,10 +22,10 @@ const PortfolioEditor = () => {
   const [projects, setProjects] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedTemplate,portfolioName } = location.state || {}; // Get portfolioId from state if available
-  
-  const _id=location.state._id; // Get portfolioId from state if available
-  console.log(location.state)
+  const { selectedTemplate, portfolioName } = location.state || {}; // Get portfolioId from state if available
+
+  const _id = location.state._id; // Get portfolioId from state if available
+  console.log(location.state);
   useEffect(() => {
     if (location.state) {
       setBasicInfo(location.state.basicInfo || {});
@@ -35,7 +36,7 @@ const PortfolioEditor = () => {
       setProjects(location.state.projects || []);
     }
   }, []);
-  
+
   const handleAddSkill = () => {
     setSkills([...skills, ""]);
   };
@@ -53,39 +54,40 @@ const PortfolioEditor = () => {
   };
 
   const handlePreview = () => {
-    console.log(basicInfo)
+    console.log(basicInfo);
     navigate("/preview", {
-        state: {
-          portfolioName,
-          basicInfo,
-          socialLinks,
-          selectedTemplate,
-          skills,
-          education,
-          experience,
-          projects,
-        },
-      });
-  }
-
-  const handleSave = async() => {
-    const portfolioData = {
+      state: {
         portfolioName,
-        selectedTemplate,
         basicInfo,
         socialLinks,
+        selectedTemplate,
         skills,
         education,
         experience,
         projects,
-    }
-    try {
-      const url = _id
-        ? `http://localhost:5000/api/portfolio/${_id}` // Update existing portfolio
-        : "http://localhost:5000/api/portfolio/create"; // Create new portfolio
+      },
+    });
+  };
 
+  const handleSave = async () => {
+    const portfolioData = {
+      portfolioName,
+      selectedTemplate,
+      basicInfo,
+      socialLinks,
+      skills,
+      education,
+      experience,
+      projects,
+    };
+  
+    try {
+      const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+      const url = _id
+        ? `${apiUrl}/api/portfolio/${_id}` // Update existing portfolio
+        : `${apiUrl}/api/portfolio/create`; // Create new portfolio
+  
       const method = _id ? "PUT" : "POST"; // Use PUT for update, POST for create
-      console.log(_id);
       const response = await fetch(url, {
         method,
         headers: {
@@ -94,109 +96,211 @@ const PortfolioEditor = () => {
         },
         body: JSON.stringify(portfolioData),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
-        alert(_id ? "Portfolio updated successfully!" : "Portfolio created successfully!");
+        toast.success(
+          _id
+            ? "Portfolio updated successfully!"
+            : "Portfolio created successfully!",
+          {
+            position: "top-right",
+            autoClose: 5000, // Auto close after 5 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+
         console.log("Saved Portfolio:", data);
-        navigate("/dashboard"); // Redirect to dashboard after saving
+        if (!data._id) {
+          console.error("No _id returned from the server.");
+        } else {
+          location.state._id = data._id; // Update _id in the state
+        }
+        // setTimeout(()=>{
+        //   navigate("/dashboard"); // Redirect to dashboard after saving
+
+        // },5000)
       } else {
         const errorData = await response.json();
-        alert(`Failed to save portfolio: ${errorData.message}`);
+        toast.error(`Failed to save portfolio: ${errorData.message}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
     } catch (error) {
       console.error("Error saving portfolio:", error);
-      alert("An error occurred while saving the portfolio.");
+      toast.error("An error occurred while saving the portfolio.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
+  };
 
+  const handlePublish = async () => {
+    if (!_id) {
+      toast.error("Please save the portfolio before publishing!", {
+        position: "top-right",
+        autoClose: 5000, // Auto close after 5 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+  
+    try {
+      const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+      const response = await fetch(`${apiUrl}/api/portfolio/${_id}/publish`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        toast.success("Portfolio published successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setTimeout(()=>{
+          navigate(`/portfolio/${portfolioName.toLowerCase()}`); // Redirect to public portfolio URL
 
-  }
+        },5000)
+      } else {
+        const errorData = await response.json();
+        toast.error(`Failed to publish portfolio: ${errorData.message}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    } catch (error) {
+      console.error("Error publishing portfolio:", error);
+      toast.error("An error occurred while publishing the portfolio.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
 
   const renderSection = () => {
     switch (selectedSection) {
-        case "basic":
-            return (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={basicInfo.fullName}
-                    onChange={(e) =>
-                      setBasicInfo({ ...basicInfo, fullName: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-    
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Professional Title
-                  </label>
-                  <input
-                    type="text"
-                    value={basicInfo.title}
-                    onChange={(e) =>
-                      setBasicInfo({ ...basicInfo, title: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="e.g. Full Stack Developer"
-                  />
-                </div>
-    
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Professional Summary
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={basicInfo.summary}
-                    onChange={(e) =>
-                      setBasicInfo({ ...basicInfo, summary: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Write a brief professional summary..."
-                  ></textarea>
-                </div>
-              </>
-            );
-    
-          case "social":
-            return (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    LinkedIn
-                  </label>
-                  <input
-                    type="text"
-                    value={socialLinks.linkedIn}
-                    onChange={(e) =>
-                      setSocialLinks({ ...socialLinks, linkedIn: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="https://linkedin.com/in/yourname"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    GitHub
-                  </label>
-                  <input
-                    type="text"
-                    value={socialLinks.github}
-                    onChange={(e) =>
-                      setSocialLinks({ ...socialLinks, github: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="https://github.com/yourusername"
-                  />
-                </div>
-              </>
-            );
+      case "basic":
+        return (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={basicInfo.fullName}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, fullName: e.target.value })
+                }
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Professional Title
+              </label>
+              <input
+                type="text"
+                value={basicInfo.title}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, title: e.target.value })
+                }
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g. Full Stack Developer"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Professional Summary
+              </label>
+              <textarea
+                rows={4}
+                value={basicInfo.summary}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, summary: e.target.value })
+                }
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Write a brief professional summary..."
+              ></textarea>
+            </div>
+          </>
+        );
+
+      case "social":
+        return (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                LinkedIn
+              </label>
+              {console.log(socialLinks.linkedIn)}
+              <input
+                type="text"
+                value={socialLinks.linkedIn}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, linkedIn: e.target.value })
+                }
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="https://linkedin.com/in/yourname"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                GitHub
+              </label>
+              <input
+                type="text"
+                value={socialLinks.github}
+                onChange={(e) =>
+                  setSocialLinks({ ...socialLinks, github: e.target.value })
+                }
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="https://github.com/yourusername"
+              />
+            </div>
+          </>
+        );
 
       case "skills":
         return (
@@ -785,45 +889,54 @@ const PortfolioEditor = () => {
         return null;
     }
   };
-  const renderTemplate=()=>{
+  const renderTemplate = () => {
+    console.log(selectedTemplate);
     switch (selectedTemplate) {
-      case "template1":
+      case "minimal":
         return <TemplateOne />;
-      case "template2":
+      case "professional":
         return <TemplateTwo />;
-      case "template3":
+      case "creative":
         return <TemplateThree />;
       default:
         return null;
     }
-
-  }
+  };
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <ToastContainer/>
         <div className="flex items-center mb-6">
-            <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 cursor-pointer">
-          <button className="flex items-center text-gray-600 hover:text-gray-900">
+          <Link
+            to="/dashboard"
+            className="text-gray-600 hover:text-gray-900 cursor-pointer"
+          >
+            <button className="flex items-center text-gray-600 hover:text-gray-900">
               <ArrowLeft className="h-5 w-5 mr-1" />
-            <span>Back to Dashboard</span>
-          </button>
-            </Link>
+              <span>Back to Dashboard</span>
+            </button>
+          </Link>
         </div>
 
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Edit Portfolio: {portfolioName}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Edit Portfolio: {portfolioName}
+          </h1>
           <div className="flex space-x-2">
-            <button onClick={handleSave} className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <Save className="h-4 w-4" />
+            <button
+              onClick={handleSave}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Save className="h-4 w-4" />
               Save
             </button>
             <button
-                onClick={handlePreview}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                Preview
-              </button>
+              onClick={handlePreview}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Preview
+            </button>
           </div>
         </div>
 
@@ -855,7 +968,7 @@ const PortfolioEditor = () => {
               </nav>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <button className="w-full px-4 py-2 border rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                <button onClick={handlePublish} className="w-full px-4 py-2 border rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
                   Publish Portfolio
                 </button>
                 <p className="mt-2 text-xs text-center text-gray-500">

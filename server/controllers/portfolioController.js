@@ -11,7 +11,7 @@ exports.createPortfolio = async (req, res) => {
     experience,
     projects,
   } = req.body;
-  
+
   try {
     // Check if a portfolio with the same name already exists for the user
     const exists = await Portfolio.findOne({ portfolioName, userId: req.user.id });
@@ -119,6 +119,65 @@ exports.deletePortfolio = async (req, res) => {
 
     await Portfolio.findByIdAndDelete(req.params.id);
     res.json({ message: "Portfolio deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+exports.publishPortfolio = async (req, res) => {
+  try {
+    const portfolio = await Portfolio.findById(req.params.id);
+
+    if (!portfolio) {
+      return res.status(404).json({ message: "Portfolio not found" });
+    }
+
+    if (portfolio.userId.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to publish this portfolio" });
+    }
+
+    portfolio.published = true; // Mark the portfolio as published
+    await portfolio.save();
+
+    res.status(200).json({ message: "Portfolio published successfully", slug: portfolio.portfolioName.toLowerCase() });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getPortfolioBySlug = async (req, res) => {
+  try {
+    const portfolio = await Portfolio.findOne({
+      portfolioName: { $regex: new RegExp(`^${req.params.slug}$`, "i") }, // Case-insensitive regex
+      published: true, // Ensure the portfolio is published
+    });
+
+    if (!portfolio) {
+      return res.status(404).json({ message: "Portfolio not found or not published" });
+    }
+
+    res.status(200).json(portfolio);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.checkPortfolioName = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const portfolio = await Portfolio.findOne({ portfolioName: name });
+    console.log("Checking portfolio name:", name); // Log the name being checked
+    if (portfolio) {
+      return res.status(200).json({ exists: true });
+    }
+
+    res.status(200).json({ exists: false });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

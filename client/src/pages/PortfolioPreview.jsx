@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Edit, ExternalLink } from "lucide-react";
 import TemplateOne from "../templates/TemplateOne";
 import TemplateTwo from "../templates/TemplateTwo";
+import TemplateThree from "../templates/TemplateThree";
 
 const PortfolioPreview = () => {
   const location = useLocation();
@@ -23,7 +24,7 @@ const PortfolioPreview = () => {
   } = location.state || {};
 
   
-
+  
   // Handle missing state (e.g., user directly navigates to /preview)
   if (!location.state) {
     return (
@@ -67,14 +68,53 @@ const PortfolioPreview = () => {
             projects={projects}
           />
         );
+        case "creative":
+          return (
+            <TemplateThree
+            portfolioName={portfolioName}
+            basicInfo={basicInfo}
+            socialLinks={socialLinks}
+            skills={skills}
+            education={education}
+            experience={experience}
+            projects={projects}
+            />
+          )
       default:
         return <p>No template selected.</p>;
     }
   };
 
-  const handlePublish = () => {
-    console.log("Publishing portfolio...");
-    // Add your publish logic here
+  const handlePublish = async () => {
+    console.log("Publishing portfolio with ID:", _id);
+  
+    try {
+      const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+      const response = await fetch(`${apiUrl}/api/portfolio/${_id}/publish`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Portfolio published successfully:", data);
+  
+        // Redirect to the public URL of the portfolio
+        navigate(`/portfolio/${data.slug}`);
+  
+        // Refresh the dashboard state
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to publish portfolio:", errorText);
+        alert(`Failed to publish portfolio: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Error publishing portfolio:", error);
+      alert("An error occurred while publishing the portfolio.");
+    }
   };
 
   const handleEdit = () => {
@@ -92,7 +132,7 @@ const PortfolioPreview = () => {
       },
     });
   };
-
+  
   return (
     <div className="min-h-screen w-full bg-gray-50">
       <div className="bg-white shadow-sm ">

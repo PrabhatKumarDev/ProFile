@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { templates } from '../templates/templateData';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TemplateSelection = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -18,11 +20,7 @@ const TemplateSelection = () => {
       };
     
       // Save to local storage (or replace with an API call)
-      const portfolios = JSON.parse(localStorage.getItem('portfolios')) || [];
-      portfolios.push(portfolioData);
-      localStorage.setItem('portfolios', JSON.stringify(portfolios));
-    
-      console.log('Portfolio created:', portfolioData);
+      
     
   }
     // Function to create a portfolio with the selected template and name
@@ -30,25 +28,65 @@ const TemplateSelection = () => {
     setSelectedTemplate(templateId);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!portfolioName.trim()) {
-      setNameError('Portfolio name is required');
+      setNameError("Portfolio name is required");
       return;
     }
-    
+  
     if (!selectedTemplate) {
       return;
     }
-    
-    createPortfolio(portfolioName, selectedTemplate);
-    navigate('/editor',{state:{ selectedTemplate, portfolioName }});
+  
+    try {
+      console.log("Checking portfolio name:", portfolioName);
+    const apiUrl = import.meta.env.VITE_BASE_URL; // Access the environment variable
+      const response = await fetch(`${apiUrl}/api/portfolio/check-name/${portfolioName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+      console.log("Portfolio name check response:", data);
+  
+      if (data.exists) {
+        toast.error("Portfolio name already exists. Please choose a different name.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
+  
+      // If name doesn't exist, create the portfolio
+      createPortfolio(portfolioName, selectedTemplate);
+      navigate("/editor", { state: { selectedTemplate, portfolioName } });
+    } catch (error) {
+      console.error("Error checking portfolio name:", error);
+      toast.error("An error occurred while checking the portfolio name.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   return (
     <div className="min-h-screen w-full bg-gray-50">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <ToastContainer />
         <div className="px-4 sm:px-0">
           <div className="flex items-center mb-6">
             <button
